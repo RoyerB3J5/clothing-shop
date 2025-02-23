@@ -1,3 +1,4 @@
+@import "tailwindcss";
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -10,33 +11,37 @@
   }
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+.fade-in {
+  opacity: 1;
+  transition: opacity 1s ease-in;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+.fade-out {
+  opacity: 0;
+  transition: opacity 1s ease-out;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+::selection {
+  background-color: #be9c79;
+  color: #ffffff
+}
+
+@theme{
+  --text-sm : 0.750rem;
+  --text-base: 1rem;
+  --text-xl: 1.333rem;
+  --text-2xl: 1.777rem;
+  --text-3xl: 2.369rem;
+  --text-4xl: 3.158rem;
+  --text-5xl: 4.213rem;
+
+  --font-inter: 'Inter', sans-serif;
+
+  --color-bg-black:#0E1422;
 }
