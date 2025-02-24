@@ -29,11 +29,11 @@ body {
 
 ::selection {
   background-color: #be9c79;
-  color: #ffffff
+  color: #ffffff;
 }
 
-@theme{
-  --text-sm : 0.750rem;
+@theme {
+  --text-sm: 0.75rem;
   --text-base: 1rem;
   --text-xl: 1.333rem;
   --text-2xl: 1.777rem;
@@ -41,7 +41,12 @@ body {
   --text-4xl: 3.158rem;
   --text-5xl: 4.213rem;
 
-  --font-inter: 'Inter', sans-serif;
+  --font-inter: "Inter", sans-serif;
 
-  --color-bg-black:#0E1422;
+  --color-bg-black: #0e1422;
+
+  --max-width-xl: 1200px;
+  --max-width-lg: 900px;
+  --max-width-md: 700px;
+  --max-width-sm: 90vw;
 }

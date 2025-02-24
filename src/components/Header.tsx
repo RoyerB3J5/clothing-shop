@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 type menuType = {
@@ -10,16 +10,16 @@ function Header() {
     { name: "Inicio", url: "/" },
     { name: "Tienda", url: "/store" },
   ];
-  const pathname = usePathname()
-  console.log(pathname)
+  const pathname = usePathname();
+  console.log(pathname);
   return (
-    <header className="py-8 px-16 w-full flex justify-between items-center ">
+    <header className="py-8 xl:max-w-(--max-width-xl) lg:max-w-(--max-width-lg) md:max-w-(--max-width-md) sm:max-w-(--max-width-sm) mx-auto flex justify-between items-center ">
       <div className="relative w-32 h-12">
         <Image
           src="/Header.svg"
           alt="logo"
-          layout="fill"
-          objectFit="contain"
+          fill
+          style={{ objectFit: "contain" }}
           className="w-full h-full"
         />
       </div>
@@ -27,8 +27,13 @@ function Header() {
       <nav className="flex justify-center items-center ">
         <ul className="flex justify-center items-center gap-10 text-base">
           {menu.map((item, index) => (
-            <li key={index} className={`${pathname === item.url ?"border-b-2 border-b-black":""} py-1 hover:border-b-2 hover:border-b-black transition-all`}>
-              <a href={item.url} >{item.name}</a>
+            <li
+              key={index}
+              className={`${
+                pathname === item.url ? "border-b-2 border-b-black" : ""
+              } py-1 hover:border-b-2 hover:border-b-black transition-all`}
+            >
+              <a href={item.url}>{item.name}</a>
             </li>
           ))}
         </ul>
@@ -38,8 +43,8 @@ function Header() {
         <Image
           src="/Cart.svg"
           alt="Icono de carrito"
-          layout="fill"
-          objectFit="contain"
+          fill
+          style={{ objectFit: "contain" }}
           className="w-full h-full"
         />
       </div>

@@ -27,25 +27,27 @@ function Section2() {
     },
   ];
   return (
-    <section className="grid grid-cols-1 md:grid-cols-3 gap-10 px-16 py-20 justify-center items-center">
+    <section className="xl:max-w-(--max-width-xl) lg:max-w-(--max-width-lg) md:max-w-(--max-width-md) max-w-(--max-width-sm) mx-auto grid grid-cols-1 md:grid-cols-3 gap-14  py-20 justify-center items-center">
       {data.map((item, index) => (
         <div
           key={index}
-          className="flex flex-col justify-between items-start gap-7 h-full"
+          className="flex flex-col justify-between items-start gap-9 h-full w-full"
         >
           <div className="p-3 bg-gray-100 rounded-full flex justify-center items-center">
             <div className="relative size-6 ">
               <Image
                 src={item.image}
                 alt={item.title}
-                layout="fill"
-                objectFit="contain"
+                fill
+                style={{ objectFit: "contain" }}
                 className="w-full h-full"
               />
             </div>
           </div>
           <h3 className="text-base font-semibold">{item.title}</h3>
-          <p className="text-[14px] text-[#5C5F6A] flex-1">{item.description}</p>
+          <p className="text-[14px] text-[#5C5F6A] flex-1">
+            {item.description}
+          </p>
         </div>
       ))}
     </section>
