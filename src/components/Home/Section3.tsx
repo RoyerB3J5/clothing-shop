@@ -37,11 +37,11 @@ function Section3() {
   },[categories])
 
   return (
-    <section className="xl:max-w-(--max-width-xl) lg:max-w-(--max-width-lg) md:max-w-(--max-width-md) max-w-(--max-width-sm) mx-auto py-20">
-      <h2>En Liquidación</h2>
-      <div className="grid grid-cols-4 justify-center items-center gap-6">
+    <section className="xl:max-w-(--max-width-xl) lg:max-w-(--max-width-lg) md:max-w-(--max-width-md) max-w-(--max-width-sm) mx-auto py-20 flex flex-col justify-center items-center gap-14 w-full">
+      <h2 className="text-3xl font-medium  pb-2.5 border-b-2">Categorias</h2>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 justify-center items-center gap-6 w-full">
         {categories && categories.map((item)=>(
-          <button className="bg-black text-white rounded-md px-8 py-8 " key={item.CatName}>
+          <button className="bg-gray-100 text-black rounded-xl px-8 py-8 font-medium  cursor-pointer hover:bg-black hover:text-white transition-all hover:-translate-y-1 " key={item.CatName}>
             {item.CatName}
           </button>
         ))}
