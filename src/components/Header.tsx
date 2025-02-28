@@ -13,7 +13,7 @@ function Header() {
   const pathname = usePathname();
   console.log(pathname);
   return (
-    <header className="py-8 xl:max-w-(--max-width-xl) lg:max-w-(--max-width-lg) md:max-w-(--max-width-md) sm:max-w-(--max-width-sm) mx-auto flex justify-between items-center ">
+    <header className="py-8 xl:max-w-(--max-width-xl) lg:max-w-(--max-width-lg) md:max-w-(--max-width-md) max-w-(--max-width-sm) mx-auto flex justify-between items-center ">
       <div className="relative w-32 h-12">
         <Image
           src="/Header.svg"

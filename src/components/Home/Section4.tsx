@@ -30,7 +30,7 @@ function Section4() {
             alt="Persona"
             fill
             style={{ objectFit: "contain" }}
-            className="w-full h-full"
+            sizes="(max-width: 768px) 100vw, 50vw"
           />
         </div>
       </div>

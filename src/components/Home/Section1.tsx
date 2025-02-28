@@ -26,8 +26,9 @@ function Section1() {
                 src="/hero-image.png"
                 alt="Persona"
                 fill
+                priority
                 style={{ objectFit: "contain" }}
-                className="w-full h-full"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             </div>
           </div>

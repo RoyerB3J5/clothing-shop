@@ -14,8 +14,6 @@
   transition: opacity 1s ease-out;
 }
 
-
-
 @theme {
   --text-sm: 0.75rem;
   --text-base: 1rem;
@@ -161,6 +159,16 @@
     }
     to {
       height: 0;
+    }
+  }
+  --animate-spinner-leaf-fade: spinner-leaf-fade 800ms linear infinite;
+
+  @keyframes spinner-leaf-fade {
+    0%, 100% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
     }
   }
 }

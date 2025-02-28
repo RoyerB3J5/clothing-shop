@@ -3,14 +3,30 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useCategoryStore } from "@/store/categoryStore";
+import { Spinner } from "@/components/ui/spinner";
+import { PaginationController } from "@/components/Store/PaginationControler";
+import { useRouter } from "next/navigation";
 
 type categoriesType = {
   catName: string;
   catTag: string;
 };
-
+type paginationType = {
+  currentPage: number;
+  numberOfPages: number;
+  totalResults: number;
+};
 function Page() {
   const [data, setData] = useState([]);
+  const [pagination, setPagination] = useState<paginationType>({
+    currentPage: 1,
+    numberOfPages: 0,
+    totalResults: 0,
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const { catStore, setCatStore } = useCategoryStore();
+  const router = useRouter()
   const categories: categoriesType[] = [
     {
       catName: "All",
@@ -50,8 +66,15 @@ function Page() {
     },
   ];
 
-  const url =
-    "https://apidojo-hm-hennes-mauritz-v1.p.rapidapi.com/products/list?country=us&lang=en&currentpage=0&pagesize=30";
+  const buildUrl = () => {
+    const baseUrl =
+      `https://apidojo-hm-hennes-mauritz-v1.p.rapidapi.com/products/list?country=us&lang=en&currentpage=${pagination.currentPage-1}&pagesize=30`;
+
+    return catStore === "all" ? baseUrl : `${baseUrl}&categories=${catStore}`;
+  };
+
+  const url = buildUrl();
+
   const options = {
     method: "GET",
     headers: {
@@ -62,21 +85,43 @@ function Page() {
 
   const getData = async () => {
     try {
+      setIsLoading(true);
       const response = await fetch(url, options);
       const result = await response.json();
       setData(result.results);
+      setPagination((prev: paginationType) => ({
+        ...prev,
+        numberOfPages: result.pagination.numberOfPages,
+        totalResults: result.pagination.totalNumberOfResults,
+      }));
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
+  const handleCategory = (value: string) => {
+    setCatStore(value);
+    console.log(catStore);
+  };
 
+  useEffect(() => {
+    console.log(url);
+  }, [catStore, pagination.currentPage]);
+
+  const handlePageChange = (page: number) => {
+    console.log(page);
+    setPagination((prev: paginationType) => ({
+      ...prev,
+      currentPage: page,
+    }));
+
+
+  }
   return (
-    <section className="xl:max-w-(--max-width-xl) lg:max-w-(--max-width-lg) md:max-w-(--max-width-md) max-w-(--max-width-sm) mx-auto flex gap-10">
-      <aside className="flex flex-col items-start justify-start text-black w-1/5 border-1 border-grey-100 gap-7 p-6 rounded-lg self-start">
+    <section className="xl:max-w-(--max-width-xl) lg:max-w-(--max-width-lg) md:max-w-(--max-width-md) max-w-(--max-width-sm) mx-auto flex flex-col sm:flex-row gap-10">
+      <aside className="flex flex-col items-start justify-start text-black w-full sm:w-1/5 border-1 border-gray-200 gap-5 p-6 py-8 rounded-lg self-start">
         <button
           className="bg-black text-white p-2 rounded-md"
           onClick={getData}
@@ -85,8 +130,9 @@ function Page() {
         </button>
         <h3 className="text-lg font-medium">Categories</h3>
         <RadioGroup
-          defaultValue="all"
-          className="flex flex-col justify-start items-start gap-6 pl-4"
+          className="flex flex-wrap flex-row sm:flex-col justify-start items-start gap-6 pl-4"
+          value={catStore}
+          onValueChange={handleCategory}
         >
           {categories.map((category) => (
             <div key={category.catTag} className="flex items-center space-x-2">
@@ -95,33 +141,53 @@ function Page() {
                 id={category.catTag}
                 className="cursor-pointer"
               />
-              <Label htmlFor={category.catTag}>{category.catName}</Label>
+              <Label htmlFor={category.catTag} className="text-gray-700">{category.catName}</Label>
             </div>
           ))}
         </RadioGroup>
       </aside>
-      <div className="w-4/5 grid grid-cols-3 gap-10">
-        {data.length > 0 ? (
-          data.map((item: any) => (
-            <div
-              className="flex flex-col justify-center items-center gap-2 p-5 border-1 border-grey-100 rounded-lg"
-              key={item.code}
-            >
-              <div className="relative w-full h-[300px] flex justify-start items-start">
-                <Image
-                  src={item.images[0].url}
-                  alt={item.name}
-                  fill
-                  style={{ objectFit: "contain" }}
-                  className="w-full h-full"
-                />
-              </div>
-              <p>{item.name}</p>
-              <p className="text-grey-100">{item.price.formattedValue}</p>
-            </div>
-          ))
+      <div className="w-full sm:w-4/5 flex flex-col gap-8 ">
+        {isLoading ? (
+          <Spinner size="md" className="bg-black self-center" />
         ) : (
-          <p>No hay prendas</p>
+          <>
+            <h3>
+              Showing {pagination.currentPage} - {pagination.numberOfPages} of{" "}
+              {pagination.totalResults} results
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 w-full justify-center items-center">
+              {data.length > 0 ? (
+                data.map((item: any) => (
+                  <div
+                    className="flex flex-col justify-center items-center gap-2 p-5 border-1 border-gray-200 rounded-lg cursor-pointer hover:border-black hover:-translate-y-2 transition-all w-[75%] sm:w-full"
+                    key={item.code}
+                    onClick={()=>router.push(`/store/${item.articles[0].code}`)}
+                  >
+                    <div className="relative w-full h-[220px] md:h-[280px] flex justify-start items-start">
+                      <Image
+                        src={item.images[0].url}
+                        alt={item.name}
+                        fill
+                        style={{ objectFit: "contain" }}
+                        className="w-full h-full"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    </div>
+                    <p className="text-center">{item.name}</p>
+                    <p className="text-gray-400">{item.price.formattedValue}</p>
+                  </div>
+                ))
+              ) : (
+                <p>No hay prendas</p>
+              )}
+            </div>
+            <PaginationController
+              totalPages={pagination.numberOfPages}
+              currentPage={pagination.currentPage}
+              onPageChange={handlePageChange}
+              siblingCount={1}
+            />
+          </>
         )}
       </div>
     </section>
