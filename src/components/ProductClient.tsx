@@ -3,11 +3,19 @@ import { useProductStore } from "@/store/productStore";
 import { useState } from "react";
 import Image from "next/image";
 import { IoIosArrowForward } from "react-icons/io";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const ProductClient = ({ code }: { code: string }) => {
   const [data, setData] = useState<any>({});
   const { product, setProduct } = useProductStore();
   const [selectedImage, setSelectedImage] = useState<string>("");
+  const [selectedSize, setSelectedSize] = useState<string>("");
+  const [countClothe, setCountClothe] = useState<number>(1);
   const url = `https://apidojo-hm-hennes-mauritz-v1.p.rapidapi.com/products/detail?lang=en&country=us&productcode=1267888001`;
   const options = {
     method: "GET",
@@ -33,8 +41,23 @@ const ProductClient = ({ code }: { code: string }) => {
   const seeData = () => {
     console.log(product);
   };
+
+  const handleSize = (size: string) => {
+    if (selectedSize === size) {
+      setSelectedSize("");
+    } else {
+      setSelectedSize(size);
+    }
+  };
+
+  const handleCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = parseInt(e.target.value, 10);
+    if (val > 0) {
+      setCountClothe(val);
+    }
+  };
   return (
-    <section className="xl:max-w-(--max-width-xl) lg:max-w-(--max-width-lg) md:max-w-(--max-width-md) max-w-(--max-width-sm) mx-auto">
+    <section className="xl:max-w-(--max-width-xl) lg:max-w-(--max-width-lg) md:max-w-(--max-width-md) max-w-(--max-width-sm) mx-auto flex flex-col justify-center items-start gap-8">
       <aside>
         <button
           onClick={getData}
@@ -53,9 +76,9 @@ const ProductClient = ({ code }: { code: string }) => {
           <p>{product.name}</p>
         </nav>
       </aside>
-      <div className="flex gap-8">
-        <div className="w-1/2">
-          <div className="relative w-auto h-[350px]">
+      <div className="flex gap-8 flex-col sm:flex-row w-full">
+        <div className="w-full sm:w-1/2 flex flex-col justify-center items-start gap-5 sticky top-10 self-start">
+          <div className="relative w-full h-[360px]">
             <Image
               src={selectedImage}
               alt={product.name}
@@ -63,14 +86,15 @@ const ProductClient = ({ code }: { code: string }) => {
               style={{ objectFit: "contain" }}
             />
           </div>
-          <div className="flex gap-2 justify-start items-center">
-            {product.articlesList[0].galleryDetails
-              .map((image: any, index: number) => (
+          <div className="flex gap-4 justify-start items-center">
+            {product.articlesList[0].galleryDetails.map(
+              (image: any, index: number) => (
                 <div
                   key={index}
-                  className="relative w-[60px] h-[60px] cursor-pointer"
+                  className="relative w-[80px] h-[80px] cursor-pointer"
                   onClick={() => setSelectedImage(image.baseUrl)}
                 >
+                  <div className="absolute inset-0 bg-black opacity-20 hover:opacity-0 transition-opacity z-10" />
                   <Image
                     src={image.baseUrl}
                     alt={image.id}
@@ -78,32 +102,94 @@ const ProductClient = ({ code }: { code: string }) => {
                     style={{ objectFit: "contain" }}
                   />
                 </div>
-              ))}
+              )
+            )}
           </div>
         </div>
-        <div className="w-1/2">
-          <h3>{product.name}</h3>
-          <p>
+        <div className="w-full sm:w-1/2 flex flex-col justify-center items-start gap-5">
+          <h3 className="text-2xl font-semibold">{product.name}</h3>
+          <p className="text-gray-500 font-semibold">
             {product.whitePrice.currency} {product.whitePrice.price}{" "}
           </p>
-          <p>{product.description}</p>
-          <p>{product.color.text}</p>
-          <div>
+
+          <p className="text-[14px] text-gray-400">
+            Color: {product.color.text}
+          </p>
+          <div className="flex flex-col justify-center items-start gap-2">
             <p className="uppercase">Select Sizes</p>
             <div className="flex flex-wrap gap-4 justify-start items-center">
               {product.articlesList[0].variantsList.map((item: any) => (
                 <div
                   key={item.code}
-                  className="flex items-center justify-center p-3 border-2 border-black  "
+                  className={`flex items-center justify-center p-3 border-2 border-black size-12 cursor-pointer transition-all hover:bg-black hover:text-white ${
+                    selectedSize === item.size.name ? "bg-black text-white" : ""
+                  }`}
+                  onClick={() => handleSize(item.size.name)}
                 >
                   <p>{item.size.name}</p>
                 </div>
               ))}
             </div>
           </div>
-          <button className="uppercase bg-black text-white p-2 rounded">
-            Add to Bag
-          </button>
+          <div className="flex justifiy-start items-center gap-4 w-full mt-3">
+            <input
+              type="number"
+              className="w-1/3 h-full py-3 px-3 border border-gray-300 rounded"
+              value={countClothe}
+              onChange={handleCountChange}
+            />
+            <button className="uppercase bg-black text-white px-4 rounded w-2/3 h-full py-3 cursor-pointer hover:-translate-y-1 transition-all">
+              Add to Bag
+            </button>
+          </div>
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="Description">
+              <AccordionTrigger>Description & Fit</AccordionTrigger>
+              <AccordionContent className="flex flex-col gap-5 text-[14px]">
+                <p className=" text-justify">
+                  {product.description}
+                </p>
+                <div>
+                  <p className="uppercase font-semibold">Size</p>
+                  <ul className="flex flex-col gap-2">
+                  {product.measurements.map((item:string,index:number)=>(
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p className="uppercase font-semibold">Fit</p>
+                  <p>{product.fits[0]}</p>
+                </div>
+                <div>
+                  <p className="uppercase font-semibold">Collection</p>
+                  <p>{product.collection}</p>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="Materials">
+              <AccordionTrigger>Materials</AccordionTrigger>
+              <AccordionContent className="flex flex-col gap-7 text-[14px]">
+                {product.articlesList[0].materialDetails.map((item:any, index:number)=>(
+                  <div key={index} className="flex flex-col gap-2">
+                    <p className="uppercase font-semibold">{item.name}</p>
+                    <p>{item.description}</p>
+                  </div>
+                ))}
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="Care Guide">
+              <AccordionTrigger>Care Guide</AccordionTrigger>
+              <AccordionContent className="flex flex-col gap-5 text-[14px]">
+                <p className="uppercase font-semibold">Care instructions</p>
+                <ul className="list-disc pl-5">
+                  {product.articlesList[0].careInstructions.map((item:any, index:number)=>(
+                    <li key={index} className="">{item}</li>
+                  ))}
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </div>
       </div>
     </section>
