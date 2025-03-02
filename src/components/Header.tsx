@@ -1,6 +1,9 @@
 "use client";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import CartComponent from "./CartComponent";
+import { useCartStore } from "@/store/cartStore";
 type menuType = {
   name: string;
   url: string;
@@ -10,6 +13,19 @@ function Header() {
     { name: "Inicio", url: "/" },
     { name: "Tienda", url: "/store" },
   ];
+  const [isVisibleCart, setIsVisibleCart] = useState(false)
+  const {cart} = useCartStore()
+  const handleCartButtonClick = () => {
+    setIsVisibleCart(true)
+  }
+  const handleCloseCart = () => {
+    setIsVisibleCart(false)
+  }
+
+  useEffect(()=>{
+    console.log(isVisibleCart)
+  },[isVisibleCart])
+
   const pathname = usePathname();
   console.log(pathname);
   return (
@@ -39,7 +55,7 @@ function Header() {
         </ul>
       </nav>
 
-      <div className="relative size-8">
+      <div className="relative size-8 cursor-pointer" onClick={handleCartButtonClick}>
         <Image
           src="/Cart.svg"
           alt="Icono de carrito"
@@ -47,7 +63,11 @@ function Header() {
           style={{ objectFit: "contain" }}
           className="w-full h-full"
         />
+        {cart.length > 0 &&(
+          <div className="bg-red-400 rounded-full text-sm text-white size-4 flex justify-center items-center absolute -top-1 -right-1">{cart.length}</div>
+        )}
       </div>
+      <CartComponent isVisible={isVisibleCart} onClose={handleCloseCart} />
     </header>
   );
 }

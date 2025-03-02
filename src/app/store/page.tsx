@@ -2,11 +2,10 @@
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { useCategoryStore } from "@/store/categoryStore";
 import { Spinner } from "@/components/ui/spinner";
 import { PaginationController } from "@/components/Store/PaginationControler";
-import { useRouter } from "next/navigation";
+import ListProduct from "@/components/ListProduct";
 
 type categoriesType = {
   catName: string;
@@ -26,7 +25,6 @@ function Page() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const { catStore, setCatStore } = useCategoryStore();
-  const router = useRouter()
   const categories: categoriesType[] = [
     {
       catName: "All",
@@ -158,24 +156,7 @@ function Page() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 w-full justify-center items-center">
               {data.length > 0 ? (
                 data.map((item: any) => (
-                  <div
-                    className="flex flex-col justify-center items-center gap-2 p-5 border-1 border-gray-200 rounded-lg cursor-pointer hover:border-black hover:-translate-y-2 transition-all w-[75%] sm:w-full"
-                    key={item.code}
-                    onClick={()=>router.push(`/store/${item.articles[0].code}`)}
-                  >
-                    <div className="relative w-full h-[220px] md:h-[280px] flex justify-start items-start">
-                      <Image
-                        src={item.images[0].url}
-                        alt={item.name}
-                        fill
-                        style={{ objectFit: "contain" }}
-                        className="w-full h-full"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
-                    </div>
-                    <p className="text-center">{item.name}</p>
-                    <p className="text-gray-400">{item.price.formattedValue}</p>
-                  </div>
+                  <ListProduct key={item.code} code={item.code} codeArticle={item.articles[0].code} imageUrl={item.images[0].url} nameClothe={item.name} price={item.price.formattedValue}/>
                 ))
               ) : (
                 <p>No hay prendas</p>
