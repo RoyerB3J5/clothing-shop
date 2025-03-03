@@ -1,9 +1,10 @@
 "use client";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import CartComponent from "./CartComponent";
 import { useCartStore } from "@/store/cartStore";
+import { useRouter } from "next/navigation";
 type menuType = {
   name: string;
   url: string;
@@ -15,22 +16,17 @@ function Header() {
   ];
   const [isVisibleCart, setIsVisibleCart] = useState(false)
   const {cart} = useCartStore()
+  const router = useRouter()
   const handleCartButtonClick = () => {
     setIsVisibleCart(true)
   }
   const handleCloseCart = () => {
     setIsVisibleCart(false)
   }
-
-  useEffect(()=>{
-    console.log(isVisibleCart)
-  },[isVisibleCart])
-
   const pathname = usePathname();
-  console.log(pathname);
   return (
     <header className="py-8 xl:max-w-(--max-width-xl) lg:max-w-(--max-width-lg) md:max-w-(--max-width-md) max-w-(--max-width-sm) mx-auto flex justify-between items-center ">
-      <div className="relative w-32 h-12">
+      <div className="relative w-32 h-12 cursor-pointer" onClick={()=>router.push('/')}>
         <Image
           src="/Header.svg"
           alt="logo"

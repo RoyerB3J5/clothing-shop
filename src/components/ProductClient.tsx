@@ -157,7 +157,7 @@ const ProductClient = ({ code }: { code: string }) => {
             />
             <button className="uppercase bg-black text-white px-4 rounded w-2/3 h-full py-3 cursor-pointer hover:-translate-y-1 transition-all" onClick={() => addProduct({
               name: product.name,
-              price: product.whitePrice.price*countClothe,
+              price: product.whitePrice,
               quantity: countClothe,
               imageUrl: product.articlesList[0].galleryDetails[0].baseUrl,
               size: selectedSize

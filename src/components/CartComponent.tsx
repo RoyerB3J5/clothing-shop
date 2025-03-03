@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useCartStore } from "@/store/cartStore";
 import React, { useEffect } from "react";
 import { IoClose } from "react-icons/io5";
@@ -10,19 +10,26 @@ interface CartComponentProps {
   onClose: () => void;
 }
 function CartComponent({ isVisible, onClose }: CartComponentProps) {
-  const { cart } = useCartStore();
-  const router = useRouter()
+  const { cart, updateProductQuantity, removeProduct } = useCartStore();
+  const router = useRouter();
   useEffect(() => {
     if (isVisible) {
-      document.body.style.overflow = "hidden";
-      document.body.style.paddingRight = "17px";
+      document.body.classList.add("no-scroll");
     } else {
-      document.body.style.overflow = "auto";
-      document.body.style.paddingRight = "0px";
+      document.body.classList.remove("no-scroll");
     }
   }, [isVisible]);
-
-  const subtotal = cart.reduce((total, item) => total + item.price,0)
+  const pushCheckout = () => {
+    
+    router.push("/checkout");
+    onClose()
+  }
+  const pushCart = () => {
+    
+    router.push("/cart");
+    onClose()
+  }
+  const subtotal = cart.reduce((total, item) => total + item.price, 0);
   return (
     <>
       {isVisible && (
@@ -36,7 +43,7 @@ function CartComponent({ isVisible, onClose }: CartComponentProps) {
           isVisible ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex-grow overflow-y-auto  py-7 px-3 shadow-b ">
+        <div className="flex-grow overflow-y-auto py-7 px-3  ">
           <div className="p-4 flex justify-end items-center">
             <IoClose onClick={onClose} className="cursor-pointer" />
           </div>
@@ -61,22 +68,51 @@ function CartComponent({ isVisible, onClose }: CartComponentProps) {
                     <p className="text-base font-medium">{item.name}</p>
                     <p className="text-gray-400">Size: {item.size}</p>
                   </div>
-                  <p>Quantity: {item.quantity}</p>
-                  <p>USD {item.price}</p>
+                  <p>
+                    Quantity:{" "}
+                    <select
+                      name="quantity"
+                      value={item.quantity}
+                      onChange={(e) =>
+                        updateProductQuantity(
+                          item.name,
+                          item.size,
+                          parseInt(e.target.value)
+                        )
+                      }
+                      className="px-2 py-1 border-2 border-gray-200 rounded-sm ml-2"
+                    >
+                      {Array.from({ length: 5 }, (_, i) => i + 1).map((i) => (
+                        <option key={i} value={i}>
+                          {i}
+                        </option>
+                      ))}
+                    </select>
+                  </p>
+                  <p>USD {item.price * item.quantity}</p>
                 </div>
-                <RiDeleteBin6Fill className="size-5 text-red-800 cursor-pointer" />
+                <RiDeleteBin6Fill className="size-5 text-red-800 cursor-pointer" onClick={()=>removeProduct(item.name, item.size)}/>
               </div>
             ))
           ) : (
-            <p className="text-center">No hay productos en el carrito</p>
+            <p className="text-center">You have no products in your cart</p>
           )}
         </div>
-        <div className="flex flex-col p-6 gap-7">
-          <div className="flex justify-between items-center ">
-            <p className="text-base font-medium">Subtotal: </p>
+        <div className="flex flex-col p-6 gap-7 bg-gray-100">
+          <div className="flex justify-between items-center text-gray-600 ">
+            <p className="text-base ">Subtotal: </p>
             <p>USD {subtotal.toFixed(2)}</p>
           </div>
-          <button className="bg-black text-white rounded-md  w-full py-3 cursor-pointer" onClick={()=>router.push('/checkout')}>
+          <button
+            className="bg-black text-white rounded-md  w-full py-3 cursor-pointer"
+            onClick={() => pushCart()}
+          >
+            CART
+          </button>
+          <button
+            className="bg-black text-white rounded-md  w-full py-3 cursor-pointer"
+            onClick={() => pushCheckout()}
+          >
             CHECKOUT
           </button>
         </div>
