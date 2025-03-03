@@ -17,13 +17,16 @@ import {
 } from "@/components/ui/carousel";
 import ListProduct from "./ListProduct";
 import { useCartStore } from "@/store/cartStore";
+import Link from "next/link";
 
 const ProductClient = ({ code }: { code: string }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [data, setData] = useState<any>({});
   const {addProduct} = useCartStore()
   const [selectedImage, setSelectedImage] = useState<string>("");
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [countClothe, setCountClothe] = useState<number>(1);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [similarItems, setSimilarItems] = useState<any>([]);
   const url = `https://apidojo-hm-hennes-mauritz-v1.p.rapidapi.com/products/detail?lang=en&country=us&productcode=${code}`;
   const options = {
@@ -74,12 +77,9 @@ const ProductClient = ({ code }: { code: string }) => {
     <section className="xl:max-w-(--max-width-xl) lg:max-w-(--max-width-lg) md:max-w-(--max-width-md) max-w-(--max-width-sm) mx-auto flex flex-col justify-center items-start gap-8">
       <aside>
         <nav className="flex items-center justify-start gap-2 text-[14px]">
-          <a
-            href="/store"
-            className="text-gray-400 hover:text-black transition-all"
-          >
-            Store
-          </a>
+          <Link href='/store' className="text-gray-400 hover:text-black transition-all">
+          Store
+          </Link>
           <IoIosArrowForward />
           <p>{data.name}</p>
         </nav>
@@ -96,6 +96,7 @@ const ProductClient = ({ code }: { code: string }) => {
           </div>
           <div className="flex gap-4 justify-start items-center">
             {data.articlesList[0].galleryDetails.map(
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               (image: any, index: number) => (
                 <div
                   key={index}
@@ -126,7 +127,10 @@ const ProductClient = ({ code }: { code: string }) => {
           <div className="flex flex-col justify-center items-start gap-2">
             <p className="uppercase">Select Sizes</p>
             <div className="flex flex-wrap gap-4 justify-start items-center">
-              {data.articlesList[0].variantsList.map((item: any) => (
+              
+              {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              data.articlesList[0].variantsList.map((item: any) => (
                 <div
                   key={item.code}
                   className={`flex items-center justify-center p-3 border-2 border-black size-12 cursor-pointer transition-all hover:bg-black hover:text-white ${
@@ -183,6 +187,7 @@ const ProductClient = ({ code }: { code: string }) => {
               <AccordionTrigger>Materials</AccordionTrigger>
               <AccordionContent className="flex flex-col gap-7 text-[14px]">
                 {data.articlesList[0].materialDetails.map(
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   (item: any, index: number) => (
                     <div key={index} className="flex flex-col gap-2">
                       <p className="uppercase font-semibold">{item.name}</p>
@@ -198,6 +203,7 @@ const ProductClient = ({ code }: { code: string }) => {
                 <p className="uppercase font-semibold">Care instructions</p>
                 <ul className="list-disc pl-5">
                   {data.articlesList[0].careInstructions.map(
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     (item: any, index: number) => (
                       <li key={index} className="">
                         {item}
@@ -225,7 +231,9 @@ const ProductClient = ({ code }: { code: string }) => {
               <CarouselNext className="h-8 w-8 " />
             </div>
             <CarouselContent className="py-4 h-full">
-              {similarItems.map((item:any, index: number) => (
+              {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              similarItems.map((item:any, index: number) => (
                 <CarouselItem key={index} className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4 h-[400px] w-full flex justify-center">
                   <ListProduct code ={item.code} codeArticle={item.articles[0].code} imageUrl={item.images[0].url}
                   nameClothe={item.name}

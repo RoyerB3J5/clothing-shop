@@ -81,29 +81,28 @@ function Page() {
     },
   };
 
-  const getData = async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(url, options);
-      const result = await response.json();
-      setData(result.results);
-      setPagination((prev: paginationType) => ({
-        ...prev,
-        numberOfPages: result.pagination.numberOfPages,
-        totalResults: result.pagination.totalNumberOfResults,
-      }));
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleCategory = (value: string) => {
     setCatStore(value);
   };
 
   useEffect(() => {
+    const getData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(url, options);
+        const result = await response.json();
+        setData(result.results);
+        setPagination((prev: paginationType) => ({
+          ...prev,
+          numberOfPages: result.pagination.numberOfPages,
+          totalResults: result.pagination.totalNumberOfResults,
+        }));
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     getData()
   }, [catStore, pagination.currentPage]);
 
@@ -118,12 +117,6 @@ function Page() {
   return (
     <section className="xl:max-w-(--max-width-xl) lg:max-w-(--max-width-lg) md:max-w-(--max-width-md) max-w-(--max-width-sm) mx-auto flex flex-col sm:flex-row gap-10">
       <aside className="flex flex-col items-start justify-start text-black w-full sm:w-1/5 border-1 border-gray-200 gap-5 p-6 py-8 rounded-lg self-start">
-        <button
-          className="bg-black text-white p-2 rounded-md"
-          onClick={getData}
-        >
-          Obtener datos
-        </button>
         <h3 className="text-lg font-medium">Categories</h3>
         <RadioGroup
           className="flex flex-wrap flex-row sm:flex-col justify-start items-start gap-6 pl-4"
@@ -153,6 +146,7 @@ function Page() {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 w-full justify-center items-center">
               {data.length > 0 ? (
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 data.map((item: any) => (
                   <ListProduct key={item.code} code={item.code} codeArticle={item.articles[0].code} imageUrl={item.images[0].url} nameClothe={item.name} price={item.price.formattedValue}/>
                 ))

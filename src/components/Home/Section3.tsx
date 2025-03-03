@@ -2,7 +2,7 @@
 import { useCategoryStore } from "@/store/categoryStore";
 import { useRouter } from "next/navigation";
 import { Spinner } from "@/components/ui/spinner";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 type categoriesType = {
   CatName: string;
   tagCodes: string[];
@@ -22,28 +22,31 @@ function Section3() {
     },
   };
 
-  const getCategories = async () => {
-    try {
-      setIsLoading(true)
-      const response = await fetch(url, options);
-      const result = await response.text();
-      const data = JSON.parse(result);
-      const filteredData = data.filter((item : any) => item.tagCodes.length > 0).map((item:any)=>({
-        CatName: item.CatName,
-        tagCodes: item.tagCodes
-      }))
-      setCategories(filteredData);
-      
-    } catch (error) {
-      console.error(error);
-    } finally{
-      setIsLoading(false)
-    }
-  };
+  const getCategories =useCallback(
+    async () => {
+      try {
+        setIsLoading(true)
+        const response = await fetch(url, options);
+        const result = await response.text();
+        const data = JSON.parse(result);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const filteredData = data.filter((item : any) => item.tagCodes.length > 0).map((item:any)=>({
+          CatName: item.CatName,
+          tagCodes: item.tagCodes
+        }))
+        setCategories(filteredData);
+        
+      } catch (error) {
+        console.error(error);
+      } finally{
+        setIsLoading(false)
+      }
+    },[]
+  ) 
 
   useEffect(()=>{
     getCategories()
-  },[])
+  },[getCategories])
 
   const changeStorePage = (category: string) => {
     setCatStore(category)
