@@ -1,6 +1,5 @@
 "use client";
-import { useProductStore } from "@/store/productStore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { IoIosArrowForward } from "react-icons/io";
 import {
@@ -21,13 +20,12 @@ import { useCartStore } from "@/store/cartStore";
 
 const ProductClient = ({ code }: { code: string }) => {
   const [data, setData] = useState<any>({});
-  const { product, setProduct } = useProductStore();
   const {addProduct} = useCartStore()
   const [selectedImage, setSelectedImage] = useState<string>("");
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [countClothe, setCountClothe] = useState<number>(1);
   const [similarItems, setSimilarItems] = useState<any>([]);
-  const url = `https://apidojo-hm-hennes-mauritz-v1.p.rapidapi.com/products/detail?lang=en&country=us&productcode=1267888001`;
+  const url = `https://apidojo-hm-hennes-mauritz-v1.p.rapidapi.com/products/detail?lang=en&country=us&productcode=${code}`;
   const options = {
     method: "GET",
     headers: {
@@ -40,23 +38,19 @@ const ProductClient = ({ code }: { code: string }) => {
     try {
       const response = await fetch(url, options);
       const result = await response.json();
-      setProduct(result.product);
+      setData(result.product);
       setSelectedImage(
         result.product.articlesList[0].galleryDetails[0].baseUrl
       );
 
-      if (!product.mainCategory.code) return;
-      const urlCollection = `https://apidojo-hm-hennes-mauritz-v1.p.rapidapi.com/products/list?country=us&lang=en&currentpage=0&pagesize=30&categories=${product.mainCategory.code}`;
+      if (!data.mainCategory.code) return;
+      const urlCollection = `https://apidojo-hm-hennes-mauritz-v1.p.rapidapi.com/products/list?country=us&lang=en&currentpage=0&pagesize=30&categories=${data.mainCategory.code}`;
       const responseCollection = await fetch(urlCollection, options);
       const resultCollection = await responseCollection.json();
       setSimilarItems(resultCollection.results);
     } catch (error) {
       console.error(error);
     }
-  };
-
-  const seeData = () => {
-    console.log(product);
   };
 
   const handleSize = (size: string) => {
@@ -73,15 +67,12 @@ const ProductClient = ({ code }: { code: string }) => {
       setCountClothe(val);
     }
   };
+  useEffect(()=>{
+    getData()
+  },)
   return (
     <section className="xl:max-w-(--max-width-xl) lg:max-w-(--max-width-lg) md:max-w-(--max-width-md) max-w-(--max-width-sm) mx-auto flex flex-col justify-center items-start gap-8">
       <aside>
-        <button
-          onClick={getData}
-          className="bg-blue-500 text-white p-2 rounded"
-        >
-          Obtener Data
-        </button>
         <nav className="flex items-center justify-start gap-2 text-[14px]">
           <a
             href="/store"
@@ -90,7 +81,7 @@ const ProductClient = ({ code }: { code: string }) => {
             Store
           </a>
           <IoIosArrowForward />
-          <p>{product.name}</p>
+          <p>{data.name}</p>
         </nav>
       </aside>
       <div className="flex gap-8 flex-col sm:flex-row w-full">
@@ -98,13 +89,13 @@ const ProductClient = ({ code }: { code: string }) => {
           <div className="relative w-full h-[380px]">
             <Image
               src={selectedImage}
-              alt={product.name}
+              alt={data.name}
               fill
               style={{ objectFit: "contain" }}
             />
           </div>
           <div className="flex gap-4 justify-start items-center">
-            {product.articlesList[0].galleryDetails.map(
+            {data.articlesList[0].galleryDetails.map(
               (image: any, index: number) => (
                 <div
                   key={index}
@@ -124,18 +115,18 @@ const ProductClient = ({ code }: { code: string }) => {
           </div>
         </div>
         <div className="w-full sm:w-1/2 flex flex-col justify-center items-start gap-5">
-          <h3 className="text-2xl font-semibold">{product.name}</h3>
+          <h3 className="text-2xl font-semibold">{data.name}</h3>
           <p className="text-gray-500 font-semibold">
-            {product.whitePrice.currency} {product.whitePrice.price}{" "}
+            {data.whitePrice.currency} {data.whitePrice.price}{" "}
           </p>
 
           <p className="text-[14px] text-gray-400">
-            Color: {product.color.text}
+            Color: {data.color.text}
           </p>
           <div className="flex flex-col justify-center items-start gap-2">
             <p className="uppercase">Select Sizes</p>
             <div className="flex flex-wrap gap-4 justify-start items-center">
-              {product.articlesList[0].variantsList.map((item: any) => (
+              {data.articlesList[0].variantsList.map((item: any) => (
                 <div
                   key={item.code}
                   className={`flex items-center justify-center p-3 border-2 border-black size-12 cursor-pointer transition-all hover:bg-black hover:text-white ${
@@ -156,10 +147,10 @@ const ProductClient = ({ code }: { code: string }) => {
               onChange={handleCountChange}
             />
             <button className="uppercase bg-black text-white px-4 rounded w-2/3 h-full py-3 cursor-pointer hover:-translate-y-1 transition-all" onClick={() => addProduct({
-              name: product.name,
-              price: product.whitePrice,
+              name: data.name,
+              price: data.whitePrice,
               quantity: countClothe,
-              imageUrl: product.articlesList[0].galleryDetails[0].baseUrl,
+              imageUrl: data.articlesList[0].galleryDetails[0].baseUrl,
               size: selectedSize
             })}>
               Add to Bag
@@ -169,29 +160,29 @@ const ProductClient = ({ code }: { code: string }) => {
             <AccordionItem value="Description">
               <AccordionTrigger>Description & Fit</AccordionTrigger>
               <AccordionContent className="flex flex-col gap-5 text-[14px]">
-                <p className=" text-justify">{product.description}</p>
+                <p className=" text-justify">{data.description}</p>
                 <div>
                   <p className="uppercase font-semibold">Size</p>
                   <ul className="flex flex-col gap-2">
-                    {product.measurements.map((item: string, index: number) => (
+                    {data.measurements.map((item: string, index: number) => (
                       <li key={index}>{item}</li>
                     ))}
                   </ul>
                 </div>
                 <div>
                   <p className="uppercase font-semibold">Fit</p>
-                  <p>{product.fits[0]}</p>
+                  <p>{data.fits[0]}</p>
                 </div>
                 <div>
                   <p className="uppercase font-semibold">Collection</p>
-                  <p>{product.collection}</p>
+                  <p>{data.collection}</p>
                 </div>
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="Materials">
               <AccordionTrigger>Materials</AccordionTrigger>
               <AccordionContent className="flex flex-col gap-7 text-[14px]">
-                {product.articlesList[0].materialDetails.map(
+                {data.articlesList[0].materialDetails.map(
                   (item: any, index: number) => (
                     <div key={index} className="flex flex-col gap-2">
                       <p className="uppercase font-semibold">{item.name}</p>
@@ -206,7 +197,7 @@ const ProductClient = ({ code }: { code: string }) => {
               <AccordionContent className="flex flex-col gap-5 text-[14px]">
                 <p className="uppercase font-semibold">Care instructions</p>
                 <ul className="list-disc pl-5">
-                  {product.articlesList[0].careInstructions.map(
+                  {data.articlesList[0].careInstructions.map(
                     (item: any, index: number) => (
                       <li key={index} className="">
                         {item}
@@ -219,7 +210,7 @@ const ProductClient = ({ code }: { code: string }) => {
           </Accordion>
         </div>
       </div>
-      {product.collection ? (
+      {data.collection ? (
         <div className="flex flex-col gap-3 w-full mt-10">
           <h4 className="uppercase text-2xl">Similar Items</h4>
           <Carousel

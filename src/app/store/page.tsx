@@ -101,15 +101,13 @@ function Page() {
 
   const handleCategory = (value: string) => {
     setCatStore(value);
-    console.log(catStore);
   };
 
   useEffect(() => {
-    console.log(url);
+    getData()
   }, [catStore, pagination.currentPage]);
 
   const handlePageChange = (page: number) => {
-    console.log(page);
     setPagination((prev: paginationType) => ({
       ...prev,
       currentPage: page,

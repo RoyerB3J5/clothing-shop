@@ -8,21 +8,21 @@ type dataType = {
 function Section2() {
   const data: dataType[] = [
     {
-      title: "Envío gratis",
+      title: "Free Shipping",
       description:
-        "Renueva tu estilo hoy y obten envío gratis en todas tus compras",
+        "Upgrade your style today and get FREE shipping on all orders! Don't miss out.",
       image: "/delivery.svg",
     },
     {
-      title: "Satisfacción garantizada",
+      title: "Satisfaction Guarantee",
       description:
-        "Compre con confianza con nuestra Garantía de satisfacción: le encantará o le reembolsaremos el dinero.",
+        "Shop confidently with our Satisfaction Guarantee: Love it or get a refund.",
       image: "/start.svg",
     },
     {
-      title: "Pagos seguros",
+      title: "Secure Payment",
       description:
-        "Tu seguridad es nuestra prioridad. Tus pagos son seguros y tus datos están protegidos.",
+        "Your security is our priority. Your payments are secure with us.",
       image: "/shield.svg",
     },
   ];

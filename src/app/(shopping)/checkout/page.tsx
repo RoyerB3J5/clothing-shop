@@ -3,7 +3,7 @@ import { useCartStore } from "@/store/cartStore";
 import { useCheckoutStore } from "@/store/checkoutStore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm, SubmitHandler, set } from "react-hook-form";
+import { useForm, SubmitHandler} from "react-hook-form";
 import { MdLocalShipping } from "react-icons/md";
 import { TiDocumentText } from "react-icons/ti";
 import CheckoutForm from "@/components/Form";
